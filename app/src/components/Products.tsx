@@ -32,7 +32,8 @@ const Products = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-200 flex flex-col items-center p-6">
       <header className="text-center mb-8">
-        <h1 className="text-5xl font-extrabold text-gray-900 drop-shadow-md">Product's list</h1>
+        <h1 className="text-5xl font-extrabold mb-4 text-gray-900 drop-shadow-md">Product's list</h1>
+        
       </header>
 
       <div className="w-full max-w-6xl flex justify-end mb-6">

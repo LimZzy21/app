@@ -7,8 +7,10 @@ import ProductDetails from "./components/ProductDetails";
 const App = () => {
   return (
     <Provider store={store}>
+      
       <Router>
         <Routes>
+        
           <Route path="/" element={<Products />} />
           <Route path="/product/:id" element={<ProductDetails />} />
         </Routes>

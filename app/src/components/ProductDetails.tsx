@@ -28,10 +28,11 @@ const ProductDetails: React.FC = () => {
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg">
       <h1 className="text-2xl font-bold mb-4">{product.name}</h1>
+    
       <img
         src={product.imageUrl}
         alt={product.name}
-        className="w-full h-64 object-cover mb-4 rounded-lg"
+        className="w-full h-64 object-fill mb-4 rounded-lg"
       />
       <p className="text-gray-700">Count: {product.count}</p>
       <p className="text-gray-700">
@@ -39,11 +40,9 @@ const ProductDetails: React.FC = () => {
       </p>
       <p className="text-gray-700">Weight: {product.weight}</p>
 
-      {/* Comments Section */}
       <div className="mt-6">
         <h2 className="text-xl font-semibold mb-3">Comments</h2>
         
-        {/* Add comment input */}
         <div className="mb-4 flex">
           <input
             type="text"
@@ -60,14 +59,11 @@ const ProductDetails: React.FC = () => {
           </button>
         </div>
 
-        {/* Comments List */}
         <ul className="space-y-3">
           {product.comments?.map((comment, index) => {
-            // Витягуємо дані коментаря (можливо, він збережений як об'єкт або як рядок)
             const commentText = typeof comment === "string" ? comment : comment.text;
             const createdAt = typeof comment === "string" ? null : comment.createdAt;
 
-            // Форматуємо дату
             const formattedDate = createdAt
               ? new Intl.DateTimeFormat("uk-UA", {
                   day: "2-digit",
