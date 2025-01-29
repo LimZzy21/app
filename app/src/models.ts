@@ -1,3 +1,5 @@
+import { CommentProd } from "./redux/types";
+
 export interface Product {
   _id: string;
   imageUrl: string;
@@ -5,7 +7,7 @@ export interface Product {
   count: number;
   size: { width: number; height: number };
   weight: string;
-  comments: string[];
+  comments: CommentProd[];
 }
 
 export type NewProduct = Omit<Product, '_id'>;

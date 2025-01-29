@@ -33,8 +33,16 @@ const productSchema = new mongoose.Schema({
     height: Number,
   },
   weight: String,
-  comments: [String],
+  comments: [
+    {
+      _id: String,
+      productId: mongoose.Schema.Types.ObjectId, 
+      text: String, 
+      createdAt: { type: Date, default: Date.now,  }, 
+    },
+  ],
 });
+
 
 const Product = mongoose.model("Product", productSchema);
 
@@ -43,7 +51,7 @@ app.get("/api/products", async (req, res) => {
     const products = await Product.find();
     res.json(products);
   } catch (err) {
-    const error = err as Error; // Приведення типу
+    const error = err as Error; 
     res.status(500).json({ message: error.message });
   }
 });
@@ -97,30 +105,42 @@ app.put("/api/products/:id", async (req, res) => {
   }
 });
 
-app.patch("/api/products/:id/comments", async (req, res) => {
+app.patch("/api/products/comments/:id", async (req, res) => {
   try {
-    const { comment } = req.body;
-    if (!comment) {
-      res.status(400).json({ message: "Comment is required" });
-      return;
+    const { text } = req.body;
+    const productId = req.params.id;
+
+    if (!text) {
+       res.status(400).json({ message: "Comment text is required" });
+       return
     }
 
-    const updatedProduct = await Product.findByIdAndUpdate(
-      req.params.id,
-      { $push: { comments: comment }, },
-      { new: true, timestamps:true}
-    );
+    const product = await Product.findById(productId);
 
-    if (!updatedProduct) {
-      res.status(404).json({ message: "Product not found" });
-      return;
+    if (!product) {
+       res.status(404).json({ message: "Product not found" });
+       return
     }
-    res.json(updatedProduct);
+    console.log(product)
+    const newComment = {
+      id: Date.now().toString(),
+      productId,
+      text,
+      createdAt: new Date(),
+    };
+
+    product.comments.push(newComment);
+
+    await product.save();
+
+    res.json({ message: "Comment added successfully", product });
   } catch (err) {
     const error = err as Error;
     res.status(500).json({ message: error.message });
   }
 });
+
+
 
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

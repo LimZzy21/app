@@ -5,7 +5,14 @@ export interface Product {
     count: number;
     size: { width: number; height: number };
     weight: string;
-    comments: string[];
+    comments: CommentProd[];
+  }
+
+  export interface CommentProd {
+    id?: string; 
+    productId: string;
+    text: string;
+    createdAt: string; 
   }
   
  export interface ProductState {

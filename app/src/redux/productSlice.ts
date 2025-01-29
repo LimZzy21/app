@@ -1,6 +1,6 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, } from "@reduxjs/toolkit";
 import axios from "axios";
-import { Product, ProductState } from "./types";
+import { CommentProd, Product, ProductState } from "./types";
 import { NewProduct } from "../models";
 
 const API_URL = "http://localhost:5000/api/products";
@@ -75,15 +75,32 @@ export const fetchProductById = createAsyncThunk(
   }
 );
 
-export const addComment = createAsyncThunk(
-  "products/addComment",
-  async ({ productId, comment }: { productId: string; comment: string }) => {
-    await axios.patch(`${API_URL}/${productId}`, {
-      $push: { comments: comment },
-    });
-    return { productId, comment };
+import { createAsyncThunk } from "@reduxjs/toolkit";
+
+export const addCommentProd = createAsyncThunk<
+  { productId: string; comment: CommentProd }, 
+  { productId: string; text: string } 
+>("products/comment", async ({ productId, text }) => {
+  const response = await fetch(`${API_URL}/api/products/comments/${productId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ text }), 
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to add comment");
   }
-);
+
+  const data = await response.json(); 
+
+  return {
+    productId,
+    comment: data.product.comments
+  };
+});
+
+
+
 
 const initialState: ProductState = {
   products: [],
@@ -172,14 +189,10 @@ const productsSlice = createSlice({
         state.error = action.payload as string;
       });
 
-    builder.addCase(addComment.fulfilled, (state, action) => {
-      const product = state.products.find(
-        (p) => p._id === action.payload.productId
-      );
-      if (product) {
-        product.comments.push(action.payload.comment);
-      }
-    });
+      
+      
+      
+      
   },
 });
 
