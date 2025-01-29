@@ -78,24 +78,28 @@ export const fetchProductById = createAsyncThunk(
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const addCommentProd = createAsyncThunk<
-  { productId: string; comment: CommentProd }, 
-  { productId: string; text: string } 
+  { productId: string; comment: CommentProd },
+  { productId: string; text: string }
 >("products/comment", async ({ productId, text }) => {
-  const response = await fetch(`${API_URL}/api/products/comments/${productId}`, {
+  console.log("Sending request to:", `${API_URL}/api/products/comments/${productId}`);
+
+  const response = await fetch(`${API_URL}/comments/${productId}`, {
     method: "PATCH",
-    body: JSON.stringify({ text }), 
+    body: JSON.stringify({ text }),
     headers: { "Content-Type": "application/json" },
   });
 
   if (!response.ok) {
-    throw new Error("Failed to add comment");
+    const errorText = await response.text();
+    throw new Error(`Failed to add comment: ${response.status} - ${errorText}`);
   }
 
-  const data = await response.json(); 
+  const data = await response.json();
+  console.log("Response data:", data);
 
   return {
     productId,
-    comment: data.product.comments
+    comment: data.product.comments, 
   };
 });
 

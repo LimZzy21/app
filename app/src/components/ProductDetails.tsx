@@ -19,7 +19,7 @@ const ProductDetails: React.FC = () => {
 
   const handleAddComment = () => {
     if (!comment.trim() || !id) return;
-    dispatch(addCommentProd({ productId: id, text: comment })); 
+    dispatch(addCommentProd({ productId: id, text: comment }));
     setComment("");
   };
 
@@ -31,7 +31,7 @@ const ProductDetails: React.FC = () => {
       <img
         src={product.imageUrl}
         alt={product.name}
-        className="w-full h-64 object-cover mb-4"
+        className="w-full h-64 object-cover mb-4 rounded-lg"
       />
       <p className="text-gray-700">Count: {product.count}</p>
       <p className="text-gray-700">
@@ -39,32 +39,56 @@ const ProductDetails: React.FC = () => {
       </p>
       <p className="text-gray-700">Weight: {product.weight}</p>
 
+      {/* Comments Section */}
       <div className="mt-6">
-  <h2 className="text-xl font-semibold mb-2">Comments</h2>
-  <div className="mb-4 flex">
-    <input
-      type="text"
-      value={comment}
-      onChange={(e) => setComment(e.target.value)}
-      className="flex-1 p-2 border border-gray-300 rounded-l"
-      placeholder="Add a comment..."
-    />
-    <button
-      className="bg-blue-500 text-white px-4 py-2 rounded-r"
-      onClick={handleAddComment}
-    >
-      Add
-    </button>
-  </div>
-  <ul className="space-y-2">
-    {product.comments?.map((comment, index) => (
-      <li key={index} className="bg-gray-100 p-2 rounded">
-        {typeof comment === "string" ? comment : comment.text} 
-      </li>
-    ))}
-  </ul>
-</div>
+        <h2 className="text-xl font-semibold mb-3">Comments</h2>
+        
+        {/* Add comment input */}
+        <div className="mb-4 flex">
+          <input
+            type="text"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            className="flex-1 p-2 border border-gray-300 rounded-l focus:outline-none"
+            placeholder="Add a comment..."
+          />
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600 transition"
+            onClick={handleAddComment}
+          >
+            Add
+          </button>
+        </div>
 
+        {/* Comments List */}
+        <ul className="space-y-3">
+          {product.comments?.map((comment, index) => {
+            // Витягуємо дані коментаря (можливо, він збережений як об'єкт або як рядок)
+            const commentText = typeof comment === "string" ? comment : comment.text;
+            const createdAt = typeof comment === "string" ? null : comment.createdAt;
+
+            // Форматуємо дату
+            const formattedDate = createdAt
+              ? new Intl.DateTimeFormat("uk-UA", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }).format(new Date(createdAt))
+              : "";
+
+            return (
+              <li key={index} className="bg-gray-50 p-3 rounded-lg border border-gray-200 shadow-sm">
+                <p className="text-gray-800">{commentText}</p>
+                {createdAt && (
+                  <p className="text-gray-500 text-sm mt-1">🕒 {formattedDate}</p>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </div>
   );
 };

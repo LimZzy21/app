@@ -105,10 +105,13 @@ app.put("/api/products/:id", async (req, res) => {
   }
 });
 
+
 app.patch("/api/products/comments/:id", async (req, res) => {
   try {
     const { text } = req.body;
     const productId = req.params.id;
+
+    console.log("Received productId:", productId);
 
     if (!text) {
        res.status(400).json({ message: "Comment text is required" });
@@ -118,24 +121,28 @@ app.patch("/api/products/comments/:id", async (req, res) => {
     const product = await Product.findById(productId);
 
     if (!product) {
+      console.log("Product not found");
        res.status(404).json({ message: "Product not found" });
        return
     }
-    console.log(product)
+
+    console.log("Found product:", product);
+
     const newComment = {
-      id: Date.now().toString(),
-      productId,
+      _id: new mongoose.Types.ObjectId(),
       text,
       createdAt: new Date(),
     };
 
     product.comments.push(newComment);
-
     await product.save();
+
+    console.log("Updated product with comment:", product);
 
     res.json({ message: "Comment added successfully", product });
   } catch (err) {
     const error = err as Error;
+    console.error("Error adding comment:", error.message);
     res.status(500).json({ message: error.message });
   }
 });
